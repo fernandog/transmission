@@ -23,6 +23,8 @@ Torrent._StatusDownloadWait = 3;
 Torrent._StatusDownload = 4;
 Torrent._StatusSeedWait = 5;
 Torrent._StatusSeed = 6;
+Torrent._StatusTrackerError = 7;
+Torrent._StatusLocalError = 8;
 
 // Torrent.fields.seedRatioMode
 Torrent._RatioUseGlobal = 0;
@@ -342,6 +344,12 @@ Torrent.prototype = {
     hasExtraInfo: function () {
         return 'hashString' in this.fields;
     },
+    isTrackerError: function () {
+        return this.getStatus() === Torrent._ErrTrackerError;
+    },
+    isLocalError: function () {
+        return this.getStatus() === Torrent._ErrLocalError;
+    },
     isSeeding: function () {
         return this.getStatus() === Torrent._StatusSeed;
     },
@@ -374,6 +382,10 @@ Torrent.prototype = {
     },
     getStateString: function () {
         switch (this.getStatus()) {
+        case Torrent._ErrTrackerError:
+            return 'Tracker error'
+        case Torrent._ErrLocalError:
+            return 'Local error'
         case Torrent._StatusStopped:
             return this.isFinished() ? 'Seeding complete' : 'Paused';
         case Torrent._StatusCheckWait:
